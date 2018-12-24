@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block my_block %}
+
+    {% for name in names %}
+        <p>{{name}}</p>
+    {% endfor %}
+
+    <!-- Tabulator local js -->
+    <div id="example-table"></div>
+    
+    <script src="{{ url_for('static', filename='main.js')}}"> </script>
+
+{% endblock my_block %}

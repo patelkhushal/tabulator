@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block my_block %}
+<!-- Tabulator local js -->
+
+<div id="example-table"></div>
+<script type="text/javascript">
+    var jsondata = {{ data|tojson }} ;
+</script>
+<script src="{{ url_for('static', filename='data.js')}}"> </script>
+
+{% endblock my_block %}
