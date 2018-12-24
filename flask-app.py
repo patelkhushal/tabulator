@@ -26,8 +26,8 @@ def receiver():
 	# read json + reply
     data = request.get_json()
     result = ''
-    # for item in data:
-    #     print (item)
+    for item in data:
+        print (item)
     print(type(data))
     print(data)
     return result
