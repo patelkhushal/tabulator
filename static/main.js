@@ -8,21 +8,41 @@ var tabledata = [
 ];
 
 
+
 //Build Tabulator
-//ajaxURL:"file:///Users/patelkhushal@ibm.com/webapp/index.html", //ajax URL
 var table = new Tabulator("#example-table", {
 	data:tabledata,
-	layout:"fitDataFill",
+	layout: "fitDataFill",
+	history:true,
+    selectable:true, //make rows selectable
     columns:[
-		{title:"Name", field:"name", editor:"input", width:350},
-		{title:"Age", field:"age", editor:"input", width:350},
-		{title:"Fav Color", field:"col", editor:"input", width:250},
-		{title:"DOB", field:"dob", editor:"input", width:200},
-	],
-	dataEdited: myFunction(data, this)
+	    {title:"Name", field:"name", width:200},
+	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+	    {title:"Gender", field:"gender", width:100},
+	    {title:"Rating", field:"rating", align:"center", width:80},
+	    {title:"Favourite Color", field:"col"},
+	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+	    {title:"Driver", field:"car", align:"center", width:100},
+    ],
+    
 });
 
+// //select row on "select" button click
+// $("#select-row").click(function(){
+//     table.selectRow(1);
+// });
 
-function myFunction(table_json, table_obj) {
-	this.setData(data);
-  }
+// //deselect row on "deselect" button click
+// $("#deselect-row").click(function(){
+//     table.deselectRow(1);
+// });
+
+// //select row on "select all" button click
+// $("#select-all").click(function(){
+//     table.selectRow();
+// });
+
+// //deselect row on "deselect all" button click
+// $("#deselect-all").click(function(){
+//     table.deselectRow();
+// });

@@ -1,11 +1,31 @@
 {% extends "layout.html" %}
 {% block my_block %}
-<!-- Tabulator local js -->
 
+<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"> </script> -->
 <div id="example-table"></div>
 <script type="text/javascript">
-    var jsondata = {{ data|tojson }} ;
+    var jsondata = {{ content_json | tojson }} ;
+    var coldata = {{ columns_json | tojson}}
 </script>
+<button id="post-data" type="button">Submit</button>
+<button id="reset-data" type="button">Reset</button>
+
+<button id="history-undo" type="button">Undo Edit</button>
+<button id="history-redo" type="button">Redo Edit</button>
+
+<button id="select-all" type="button">Select All</button>
+<button id="deselect-all" type="button">Deselect All</button>
+
+<button id="add-row-above" type="button">Add Row Above</button>
+<button id="add-row-below" type="button">Add Row Below</button>
+<button id="delete-row" type="button">Delete Row(s)</button>
+
+<button id="add-column-left" type="button">Add Column Left</button>
+<button id="add-column-right" type="button">Add Column Right</button>
+<button id="delete-column" type="button">Delete Column</button>
+
+<!-- Checkbox: <input type="checkbox" id="myCheck"> -->
+
 <script src="{{ url_for('static', filename='data.js')}}"> </script>
 
 {% endblock my_block %}
