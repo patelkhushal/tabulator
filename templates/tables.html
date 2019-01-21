@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block my_block %}
+
+<!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"> </script> -->
+<div id="example-table"></div>
+<script type="text/javascript">
+    var jsondata = {{ content_json | tojson }} ;
+    var coldata = {{ columns_json | tojson}}
+    var editUrl = '{{ url_for( 'edit_table') }}'
+</script>
+
+
+<!-- <button id="edit-table" onclick="window.location.href=editUrl;" type="button">Edit Table</button>
+<button id="delete-table" type="button">Delete Table</button> -->
+
+<script src="{{ url_for('static', filename='tables.js')}}"> </script>
+
+{% endblock my_block %}

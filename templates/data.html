@@ -5,8 +5,11 @@
 <div id="example-table"></div>
 <script type="text/javascript">
     var jsondata = {{ content_json | tojson }} ;
-    var coldata = {{ columns_json | tojson}}
+    var coldata = {{ columns_json | tojson}};
+    var afterEditUrl = '{{ url_for( 'results') }}'; //go back to the previous view after editing the data
 </script>
+
+
 <button id="post-data" type="button">Submit</button>
 <button id="reset-data" type="button">Reset</button>
 
@@ -15,8 +18,6 @@
 
 <button id="select-all" type="button">Select All</button>
 <button id="deselect-all" type="button">Deselect All</button>
-
-<button id="add-row" type="button">Add Row</button>
 <button id="add-row-above" type="button">Add Row Above</button>
 <button id="add-row-below" type="button">Add Row Below</button>
 <button id="delete-row" type="button">Delete Row(s)</button>
