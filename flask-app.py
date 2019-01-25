@@ -38,6 +38,7 @@ def chart():
     # labels = ["January", "February", "March",
     #           "April", "May", "June", "July", "August"]
     # values = [10, 9, 8, 7, 6, 4, 7, 8]
+    extract_cols = ["p1", "p2", "progress"]
     with open('static/tables/table1/content.json') as f:
         data = json.load(f)
     # print(json.dumps(data, indent=4, sort_keys=True)) #to pretty print json

@@ -1,1 +1,1 @@
-[{"field": "id", "title": "id"}, {"field": "Name", "title": "Name"}, {"field": "Age", "title": "Age"}, {"field": "Fav Color", "title": "Fav Color"}, {"field": "progress", "title": "progress"}]
+[{"field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "fvdfv", "title": "fvdfv"}, {"field": "Name", "title": "Name"}, {"field": "p1", "title": "p1"}, {"field": "p2", "title": "p2"}, {"field": "progress", "title": "progress"}]

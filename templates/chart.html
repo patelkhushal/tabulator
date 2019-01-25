@@ -10,8 +10,9 @@
 <!-- import plugin script -->   <script src="static/Chart.min.js"></script>
    
 <h1>Flask Chart.js</h1>
-<div id="main_container"></div>
+<div class="main_container"></div>
 <!-- bar chart canvas element --><canvas id="chart" width="600" height="400"></canvas>
+<canvas id="bar-chart-horizontal" width="800" height="450"></canvas>
 <script>
    // bar chart data
    var barData = {
@@ -34,7 +35,7 @@
    steps = 10  
    max = 10  
    // draw bar chart  
-   new Chart(mychart).Bar(barData, {  
+   new Chart(mychart).Bar(barData, { 
         scaleOverride: true,  
         scaleSteps: steps,  
         scaleStepWidth: Math.ceil(max / steps),  
@@ -44,6 +45,28 @@
         barShowStroke : true,  
         scaleShowLabels: true  
    });
+//   $("#bar-chart-horizontal").text("hello");
+//    new Chart(document.getElementById("bar-chart-horizontal").getContext("2d"), {
+//     type: 'horizontalBar',
+//     data: {
+//       labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+//       datasets: [
+//         {
+//           label: "Population (millions)",
+//           backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+//           data: [2478,5267,734,784,433]
+//         }
+//       ]
+//     },
+//     options: {
+//       legend: { display: false },
+//       title: {
+//         display: true,
+//         text: 'Predicted world population (millions) in 2050'
+//       }
+//     }
+// });
+
 </script>
 <script src="static/my_chart.js"></script>
 {% endblock my_block %}
