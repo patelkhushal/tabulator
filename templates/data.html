@@ -4,32 +4,60 @@
 <!-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"> </script> -->
 <div id="example-table"></div>
 <script type="text/javascript">
-    var jsondata = {{ content_json | tojson }} ;
+    var jsondata = {{ content_json | tojson }};
     var coldata = {{ columns_json | tojson}};
     var afterEditUrl = '{{ url_for( 'results') }}'; //go back to the previous view after editing the data
 </script>
 
+<style>
+    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: #4CAF50 !important;
+    border-color: green !important;
+    }
+</style>
+<br>
+<div align="center">
+    <div class="btn-group">
+        <div class="btn-group-vertical">
+            <button id="post-data" type="button" class="btn btn-primary">Submit</button>
+            <button id="reset-data" type="button" class="btn btn-primary">Reset</button>
+        </div>
 
-<button id="post-data" type="button">Submit</button>
-<button id="reset-data" type="button">Reset</button>
 
-<button id="history-undo" type="button">Undo Edit</button>
-<button id="history-redo" type="button">Redo Edit</button>
+        <div class="btn-group-vertical">
+            <button id="add-row-above" type="button" class="btn btn-primary">Add Row Above</button>
+            <button id="add-row-below" type="button" class="btn btn-primary">Add Row Below</button>
+        </div>
 
-<button id="select-all" type="button">Select All</button>
-<button id="deselect-all" type="button">Deselect All</button>
-<button id="add-row-above" type="button">Add Row Above</button>
-<button id="add-row-below" type="button">Add Row Below</button>
-<button id="delete-row" type="button">Delete Row(s)</button>
+        <div class="btn-group-vertical">
+            <button id="add-column-left" type="button" class="btn btn-primary">Add Column Left</button>
+            <button id="add-column-right" type="button" class="btn btn-primary">Add Column Right</button>
+        </div>
 
-<button id="add-column-left" type="button">Add Column Left</button>
-<button id="add-column-right" type="button">Add Column Right</button>
-<button id="delete-column" type="button">Delete Column</button>
+        <div class="btn-group-vertical">
+            <button id="delete-row" type="button" class="btn btn-primary">Delete Row(s)</button>
+            <button id="delete-column" type="button" class="btn btn-primary">Delete Column</button>
+        </div>
 
-<br><br>
+        <div class="btn-group-vertical">
+            <button id="select-all" type="button" class="btn btn-primary">Select All</button>
+            <button id="deselect-all" type="button" class="btn btn-primary">Deselect All</button>
+        </div>
 
-<input id="selectable" type="checkbox"> Selectable Rows <br>
+        <!-- <div class="btn-group-vertical">
+        <button id="history-undo" type="button" class="btn btn-primary">Undo Edit</button>  
+        <button id="history-redo" type="button" class="btn btn-primary">Redo Edit</button>
+    </div> -->
+    </div>
 
+
+
+    <br> <br>
+
+    <div class="checkbox">
+        <label><input id="selectable" type="checkbox" value="">Selectable Rows</label>
+    </div>
+</div>
 
 <script src="{{ url_for('static', filename='data.js')}}"> </script>
 

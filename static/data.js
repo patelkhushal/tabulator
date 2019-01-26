@@ -4,14 +4,13 @@ var currRowComp; //current row (determined by the position of the cursor). Used 
 //process incoming jsondata and coldata. i.e., make them editable by changing column definition
 editableColData(coldata);
 
-
 var table = new Tabulator("#example-table", {
     data: jsondata,
-    //[{"Age": "12", "DOB": "14/05/1982", "Fav Color": "red", "Name": "Oli Bob", "id": 1}, {"Age": "1", "DOB": "14/05/1982", "Fav Color": "blue", "Name": "Mary May", "id": 2}, {"Age": "42", "DOB": "22/05/1982", "Fav Color": "green", "Name": "Christine Lobowski", "id": 3}, {"Age": "21", "DOB": "------", "Fav Color": "orange", "Name": "Kp", "id": 4}, {"Age": "12", "DOB": "01/08/1980", "Fav Color": "orange", "Name": "Brendon Philips", "id": 5}, {"Age": "16", "DOB": "31/01/1999", "Fav Color": "yellow", "Name": "Margret Marmajuke", "id": 6}]
+    //Example: [{"Age": "12", "DOB": "14/05/1982", "Fav Color": "red", "Name": "Oli Bob", "id": 1}, {"Age": "1", "DOB": "14/05/1982", "Fav Color": "blue", "Name": "Mary May", "id": 2}, {"Age": "42", "DOB": "22/05/1982", "Fav Color": "green", "Name": "Christine Lobowski", "id": 3}, {"Age": "21", "DOB": "------", "Fav Color": "orange", "Name": "Kp", "id": 4}, {"Age": "12", "DOB": "01/08/1980", "Fav Color": "orange", "Name": "Brendon Philips", "id": 5}, {"Age": "16", "DOB": "31/01/1999", "Fav Color": "yellow", "Name": "Margret Marmajuke", "id": 6}]
     layout: "fitColumns",
     history: true,
     columns: coldata,
-    //[{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
+    //Example: [{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
     cellEditing: function (cell) {
         //cell - cell component
         currColComp = cell.getColumn();
@@ -52,11 +51,13 @@ function changeRowData(columnComp) {
 
 //submit button
 $("#post-data").on("click", function () {
+    console.log("in");
     if (!columnCheck()) { return; }
     formatIds(); //properly format row ids before sending the data to flask app
-    uneditableColData(coldata); //make col defintion uneditable befor submitting
+    uneditableColData(table.getColumnDefinitions()); //make col defintion uneditable befor submitting
     ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()) //send changed column names to flask app
     ajaxPostToFlask("/changeTableContent", table.getData()) //send changed table content to flask app
+    console.log("out");
     window.location.href=afterEditUrl; //go back to the previous view after editing the data
 });
 
@@ -117,15 +118,15 @@ $("#deselect-all").on("click", function () {
     table.deselectRow();
 });
 
-//undo button
-$("#history-undo").on("click", function () {
-    table.undo();
-});
+// //undo button
+// $("#history-undo").on("click", function () {
+//     table.undo();
+// });
 
-//redo button
-$("#history-redo").on("click", function () {
-    table.redo();
-});
+// //redo button
+// $("#history-redo").on("click", function () {
+//     table.redo();
+// });
 
 //add row above button
 $("#add-row-above").on("click", function () {
@@ -178,7 +179,7 @@ $("#add-column-right").on("click", function () {
 function addColumn(left) {
     if (!columnCheck()){return}
     if (currColComp) {
-        table.addColumn({ "editableTitle": true, "editor": "input", "field": " ", "title": " " }, left, currColComp);
+        table.addColumn({ "editableTitle": true, "editor": "textarea", "formatter": "textarea", "headerFilter": true, "field": " ", "title": " " }, left, currColComp);
     }
 }
 
@@ -206,8 +207,7 @@ function editableColData(colDefinition){
     for (i=0; i < colDefinition.length; i++){
         if (colDefinition[i]["field"] !== "id"){ //leave id field uneditable
             colDefinition[i]["editableTitle"] = true;
-            colDefinition[i]["editor"] = "input";
-            // console.log(colDefinition[i]);
+            colDefinition[i]["editor"] = "textarea";
         }
     }
 }
