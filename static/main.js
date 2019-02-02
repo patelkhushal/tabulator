@@ -1,48 +1,11 @@
-//define some sample data
-var tabledata = [
-	{id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
-	{id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
-	{id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
-	{id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
-	{id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
-];
-
-
-
-//Build Tabulator
 var table = new Tabulator("#example-table", {
-	data:tabledata,
-	layout: "fitDataFill",
-	history:true,
-    selectable:true, //make rows selectable
-    columns:[
-	    {title:"Name", field:"name", width:200},
-	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-	    {title:"Gender", field:"gender", width:100},
-	    {title:"Rating", field:"rating", align:"center", width:80},
-	    {title:"Favourite Color", field:"col"},
-	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-	    {title:"Driver", field:"car", align:"center", width:100},
-    ],
-    
+    data: jsondata,
+    //Example: [{"Age": "12", "DOB": "14/05/1982", "Fav Color": "red", "Name": "Oli Bob", "id": 1}, {"Age": "1", "DOB": "14/05/1982", "Fav Color": "blue", "Name": "Mary May", "id": 2}, {"Age": "42", "DOB": "22/05/1982", "Fav Color": "green", "Name": "Christine Lobowski", "id": 3}, {"Age": "21", "DOB": "------", "Fav Color": "orange", "Name": "Kp", "id": 4}, {"Age": "12", "DOB": "01/08/1980", "Fav Color": "orange", "Name": "Brendon Philips", "id": 5}, {"Age": "16", "DOB": "31/01/1999", "Fav Color": "yellow", "Name": "Margret Marmajuke", "id": 6}]
+    layout: "fitColumns",
+    columns: coldata,
+    //Example: [{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
+    renderComplete: function () {
+        if (once) { once = false; }
+        else { animateRowCount(); }
+    },
 });
-
-// //select row on "select" button click
-// $("#select-row").click(function(){
-//     table.selectRow(1);
-// });
-
-// //deselect row on "deselect" button click
-// $("#deselect-row").click(function(){
-//     table.deselectRow(1);
-// });
-
-// //select row on "select all" button click
-// $("#select-all").click(function(){
-//     table.selectRow();
-// });
-
-// //deselect row on "deselect all" button click
-// $("#deselect-all").click(function(){
-//     table.deselectRow();
-// });

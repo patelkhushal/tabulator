@@ -1,41 +1,48 @@
-from flask import Flask, render_template, url_for, request, redirect
-# import json
-# import os
-
-# tables = list()
-# for files in os.listdir('static/tables'):
-#     if not files.startswith('.'): #ignore hidden files
-#         tables.append(files)
-# print (tables)
-
-import glob
-import os
+import csv
 import json
-import re
-# files = glob.glob("static/tables/table?/*")
-# files.sort(key=os.path.getmtime)
-# for fil in files:
-#     print (fil)
-#print(os.listdir("static/tables/table1"))
-
-def extract_field(json_list, field_name):
-    values = list()
-    for pair in json_list:
-        if field_name in pair.keys():
-            values.append(pair[field_name])
-    return values
-
-with open('static/tables/table1/content.json') as f:
-    data = json.load(f)
-#print(json.dumps(data, indent=4, sort_keys=True)) #to pretty print json
-names = extract_field(data, "Name")
-print (names)
-progress_list = extract_field(data, "progress")
-print(progress_list)
-num_list = list()
-for s in progress_list:
-    num_string = s.split("/")
-    rr = re.findall("[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?", num_string[0])
-    print (rr)
 
 
+
+
+
+
+# columns = list()
+# column_dict = dict()
+# col_dict_list = list()
+
+# row_dict = dict()
+# row_dict_list = list()
+
+# counter = 0
+
+# with open('data.csv', 'r') as csvFile:
+#     reader = csv.reader(csvFile)
+#     for row in reader:
+#         counter = counter + 1
+#         if counter == 1:
+#             columns = row
+#         else:
+#             i = 0
+#             for value in row:
+#                 row_dict[columns[i]] = row[i]
+#                 i = i + 1
+#             row_dict_list.append(row_dict)
+#             row_dict = dict()
+
+
+# for column in columns:
+#     column_dict["field"] = column
+#     column_dict["title"] = column
+#     column_dict["formatter"] = "textarea"
+#     column_dict["headerFilter"] = True
+#     column_dict["headerFilterPlaceholder"] = "Search..."
+#     col_dict_list.append(column_dict)
+#     column_dict = dict()
+
+# with open('test_rows.json', 'w') as fp:
+#     json.dump(row_dict_list, fp, indent=4)
+
+# with open('test_cols.json', 'w') as fp:
+#     json.dump(col_dict_list, fp, indent=4)
+
+# csvFile.close()

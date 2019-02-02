@@ -1,0 +1,30 @@
+[
+    {
+        "field": "id",
+        "title": "id",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Client Machines",
+        "title": "Client Machines",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "User",
+        "title": "User",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Usage",
+        "title": "Usage",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    }
+]

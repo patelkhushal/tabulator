@@ -1,6 +1,7 @@
 var currColComp;
 var currRowComp;
-// var counter_check = 0;
+var once = true;
+
 
 var table = new Tabulator("#example-table", {
     data: jsondata,
@@ -8,34 +9,60 @@ var table = new Tabulator("#example-table", {
     layout: "fitColumns",
     columns: coldata,
     //Example: [{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
-    // dataSorted: function (sorters, rows) {
-    //     //counter_check++;
-    //     //sorters - array of the sorters currently applied
-    //     //rows - array of row components in their new order
-    //     // formatIds();
-    //     // if(counter_check > 1){
-    //     //     formatIds();
-    //     // }
-    // },
+    renderComplete: function () {
+        if (once) { once = false; }
+        else { animateRowCount(); }
+    },
 });
 
-//fix ids of the row. In case of addition or deletion of a row
-function formatIds() {
-    var tableData = table.getData();
-    console.log(table.getData());
-    for (i = 0; i < tableData.length; i++) {
-        tableData[i]["id"] = (i + 1);
-    }
-    table.setData(tableData);
+function animateRowCount(){
+    $({ Counter: 0 }).animate({
+        Counter: getRowCount()
+    }, {
+            duration: 300,
+            easing: 'swing',
+            step: function () {
+                $('#row-count-number').html(Math.ceil(this.Counter));
+            }
+        });
 }
 
-$("<div>", {class: "btn-group"}).appendTo(".buttons");
+function getRowCount() {
+    if (emptyHeaderFilters()) { return table.getRows().length; }
+    else { return table.getRows(true).length; }
+}
+
+// function filteredIds() {
+//     var tableRows;
+//     if (emptyHeaderFilters()) { tableRows = table.getRows();}
+//     else { tableRows = table.getRows(true);}
+
+//     for (var i = 0; i < tableRows.length; i++) {
+//         tableRows[i].update({ "id": (i + 1) }); //update the row data for field "id"
+//     }
+// }
+
+function emptyHeaderFilters() {
+    if (table.getHeaderFilters().length == 0) {
+        return true;
+    }
+    else { return false; }
+}
+
+$("#table-title").html(tableTitle);
+
+$("<div>", { class: "btn-group"}).appendTo(".buttons");
 
 $('<input type="button" id="edit-table" value="Edit Table" class="btn btn-primary"/>').appendTo(".btn-group");
 
 $('<input type="button" id="delete-table" value="Delete Table" class="btn btn-primary"/>').appendTo(".btn-group");
 
 $('<input type="button" id="add-table" value="Add Table" class="btn btn-primary"/>').appendTo(".btn-group");
+
+$('<input type="button" id="download-table" value="Download csv" class="btn btn-primary"/>').appendTo(".btn-group");
+
+$("<div>", {class: "border border-success float-md-right card", id: "row-count"}).appendTo(".buttons").text("Total Rows");
+$("<span>", { id: "row-count-number", class:"card" }).appendTo("#row-count").text(getRowCount());
 
 
 $("#edit-table").on("click", function () {
@@ -50,5 +77,9 @@ $("#delete-table").on("click", function () {
 
 $("#add-table").on("click", function () {
 
+});
+
+$("#download-table").on("click", function () {
+    table.download("csv", "data.csv"); //download table data as a CSV formatted file with a file name of data.csv
 });
 

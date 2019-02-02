@@ -1,5 +1,6 @@
 var currColComp; //current column (determined by the position of the cursor). Used in cellEditing attribute of tabulator object
 var currRowComp; //current row (determined by the position of the cursor). Used in cellEditing attribute of tabulator objec
+var once = false;
 
 //process incoming jsondata and coldata. i.e., make them editable by changing column definition
 editableColData(coldata);
@@ -8,6 +9,10 @@ var table = new Tabulator("#example-table", {
     data: jsondata,
     //Example: [{"Age": "12", "DOB": "14/05/1982", "Fav Color": "red", "Name": "Oli Bob", "id": 1}, {"Age": "1", "DOB": "14/05/1982", "Fav Color": "blue", "Name": "Mary May", "id": 2}, {"Age": "42", "DOB": "22/05/1982", "Fav Color": "green", "Name": "Christine Lobowski", "id": 3}, {"Age": "21", "DOB": "------", "Fav Color": "orange", "Name": "Kp", "id": 4}, {"Age": "12", "DOB": "01/08/1980", "Fav Color": "orange", "Name": "Brendon Philips", "id": 5}, {"Age": "16", "DOB": "31/01/1999", "Fav Color": "yellow", "Name": "Margret Marmajuke", "id": 6}]
     layout: "fitColumns",
+    movableColumns: true,
+    movableRows: true,
+    scrollToRowIfVisible: false,
+    //scrollToRowPosition: "top",
     history: true,
     columns: coldata,
     //Example: [{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
@@ -19,7 +24,7 @@ var table = new Tabulator("#example-table", {
     columnTitleChanged: function (column) {
         //column - column component
         column.getDefinition()["title"] = $.trim(column.getDefinition()["title"]); //trim trailing whitespaces
-        if(!columnCheck()){return;}
+        if (!columnCheck()) { return; }
         changeRowData(column); //update field values for the column
     },
     rowClick: function (e, row) {
@@ -29,7 +34,72 @@ var table = new Tabulator("#example-table", {
             row.toggleSelect(); //toggle row selected state on row click
         }
     },
+    renderComplete: function () {
+        if (once) { once = false; }
+        else { animateRowCount(); }
+    },
+
 });
+
+$(".table-title").html(tableTitle);
+$('#table-title').val(tableTitle);
+
+
+$("<div>", { class: "btn-group"}).appendTo(".buttons");
+
+$("<div>", { class: "btn-group-vertical", id:"col1"}).appendTo(".btn-group");
+$('<input type="button" id="post-data" value="Submit" class="btn btn-primary btn-sm"/>').appendTo("#col1");
+$('<input type="button" id="reset-data" value="Reset" class="btn btn-primary btn-sm"/>').appendTo("#col1");
+
+$("<div>", { class: "btn-group-vertical", id:"col2"}).appendTo(".btn-group");
+$('<input type="button" id="add-row-above" value="Add Row Above" class="btn btn-primary btn-sm"/>').appendTo("#col2");
+$('<input type="button" id="add-row-below" value="Add Row Below" class="btn btn-primary btn-sm"/>').appendTo("#col2");
+
+$("<div>", { class: "btn-group-vertical", id:"col3"}).appendTo(".btn-group");
+$('<input type="button" id="add-column-left" value="Add Column Left" class="btn btn-primary btn-sm"/>').appendTo("#col3");
+$('<input type="button" id="add-column-right" value="Add Column Right" class="btn btn-primary btn-sm"/>').appendTo("#col3");
+
+$("<div>", { class: "btn-group-vertical", id:"col4"}).appendTo(".btn-group");
+$('<input type="button" id="delete-row" value="Delete Row(s)" class="btn btn-primary btn-sm"/>').appendTo("#col4");
+$('<input type="button" id="delete-column" value="Delete Column" class="btn btn-primary btn-sm"/>').appendTo("#col4");
+
+$("<div>", { class: "btn-group-vertical", id:"col5"}).appendTo(".btn-group");
+$('<input type="button" id="select-all" value="Select All" class="btn btn-primary btn-sm"/>').appendTo("#col5");
+$('<input type="button" id="deselect-all" value="Deselect All" class="btn btn-primary btn-sm"/>').appendTo("#col5");
+
+$("<div>", {class: "float-md-right card", id: "row-count"}).appendTo(".buttons").text("Total Rows");
+$("<span>", { id: "row-count-number", class:"card" }).appendTo("#row-count").text(getRowCount());
+
+$("<div>", { class: "checkbox float-md-left card", id:"select-row-checkbox"}).appendTo(".buttons");
+// $('<input />', { class:"card", type: 'checkbox', id: "selectable", checked:true }).appendTo("#select-row-checkbox");
+// $('<label />', { id:"label-checkbox" }).text("Selectable Rows").appendTo("#select-row-checkbox");
+
+$('<label id="selectable-label"><input id="selectable" type="checkbox">Selectable Rows</label>').appendTo('#select-row-checkbox');
+
+
+function animateRowCount(){
+    $({ Counter: 0 }).animate({
+        Counter: getRowCount()
+    }, {
+            duration: 300,
+            easing: 'swing',
+            step: function () {
+                $('#row-count-number').html(Math.ceil(this.Counter));
+            }
+        });
+}
+
+function getRowCount() {
+    if (emptyHeaderFilters()) { return table.getRows().length; }
+    else { return table.getRows(true).length; }
+}
+
+function emptyHeaderFilters() {
+    if (table.getHeaderFilters().length == 0) {
+        return true;
+    }
+    else { return false; }
+}
 
 function changeRowData(columnComp) {
     var oldTitle = columnComp.getDefinition()["field"];
@@ -51,14 +121,18 @@ function changeRowData(columnComp) {
 
 //submit button
 $("#post-data").on("click", function () {
-    console.log("in");
     if (!columnCheck()) { return; }
+    else if($.trim($('#table-title').val()) == ""){
+        alert("Table title cannot be empty!")
+        return;
+    }
     formatIds(); //properly format row ids before sending the data to flask app
     uneditableColData(table.getColumnDefinitions()); //make col defintion uneditable befor submitting
     ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()) //send changed column names to flask app
     ajaxPostToFlask("/changeTableContent", table.getData()) //send changed table content to flask app
-    console.log("out");
-    window.location.href=afterEditUrl; //go back to the previous view after editing the data
+    tableTitleJson["title"] = $('#table-title').val();
+    ajaxPostToFlask("/changeTableTitle", tableTitleJson);
+    window.location.href = afterEditUrl; //go back to the previous view after editing the data
 });
 
 //sends ajax post request to flaskUrl with dataToPost
@@ -75,7 +149,7 @@ function ajaxPostToFlask(flaskUrl, dataToPost) {
 //fix ids of the row. In case of addition or deletion of a row
 function formatIds() {
     var tableData = table.getData();
-    for (i = 0; i < tableData.length; i++) {
+    for (var i = 0; i < tableData.length; i++) {
         tableData[i]["id"] = (i + 1);
     }
     table.setData(tableData);
@@ -139,7 +213,8 @@ $("#add-row-below").on("click", function () {
 });
 
 function addRow(above) {
-    var id;
+    clearHeaderFilters(); //clear header filters before adding the row
+    var id = 0;
     if (currRowComp) { id = currRowComp.getIndex(); }
     else {
         rowdata = table.getSelectedData();
@@ -148,8 +223,31 @@ function addRow(above) {
             id = rowdata[rowdata.length - 1]["id"]; //last selected row
         }
     }
-    console.log("hi");
-    table.addRow({ id: "" }, above, id);
+    table.addRow({ id: ""}, above, id).then(function (row) {
+        //row - the row component for the row updated or added
+        //console.log(table.getRows());
+        //console.log(table.getData());
+        //var tmprowComp = table.getRow(table.getRows.length - 1);
+        formatIds(); //give proper id to the new row
+        //after formatIds(), id = id of the new row
+        //scroll to the newly added row
+        if(id == 0 && above){
+            table.scrollToRow(1);
+        }
+        else if(id == 0 && !above){
+            table.scrollToRow(table.getRows().length)
+        }
+        else{
+            table.scrollToRow(id);
+        }
+    })
+
+}
+
+function clearHeaderFilters(){
+    for(var i=0; i < table.getColumnDefinitions().length; i++){
+        table.setHeaderFilterValue(table.getColumnDefinitions()[i]["title"], ""); //set header filter for a column to  ""
+    }
 }
 
 //delete row(s) button
@@ -164,6 +262,7 @@ $("#delete-row").on("click", function () {
             table.deleteRow(rowid);
         }
     }
+    formatIds();
 });
 
 //add column to the left of the current column button
@@ -177,9 +276,9 @@ $("#add-column-right").on("click", function () {
 });
 
 function addColumn(left) {
-    if (!columnCheck()){return}
+    if (!columnCheck()) { return }
     if (currColComp) {
-        table.addColumn({ "editableTitle": true, "editor": "textarea", "formatter": "textarea", "headerFilter": true, "field": " ", "title": " " }, left, currColComp);
+        table.addColumn({ "editableTitle": true, "editor": "textarea", "formatter": "textarea", "headerFilter": true, "headerFilterPlaceholder": "Search...", "field": " ", "title": " " }, left, currColComp);
     }
 }
 
@@ -188,7 +287,6 @@ $("#delete-column").on("click", function () {
     if (currColComp) {
         table.deleteColumn(currColComp);
     }
-
     rowData = table.getData();
     deletedColName = currColComp.getDefinition()["title"]
     for (i = 0; i < rowData.length; i++) { //remove the deleted column info from row data
@@ -203,21 +301,29 @@ $('#selectable').change(function () {
     }
 });
 
-function editableColData(colDefinition){
-    for (i=0; i < colDefinition.length; i++){
-        if (colDefinition[i]["field"] !== "id"){ //leave id field uneditable
+function editableColData(colDefinition) {
+    for (i = 0; i < colDefinition.length; i++) {
+        if (colDefinition[i]["field"] !== "id") { //leave id field uneditable
             colDefinition[i]["editableTitle"] = true;
             colDefinition[i]["editor"] = "textarea";
         }
     }
 }
 
-function uneditableColData(colDefinition){
-    for (i=0; i < colDefinition.length; i++){
-        if (colDefinition[i]["field"] !== "id"){ //leave id field unchanged
+function uneditableColData(colDefinition) {
+    for (i = 0; i < colDefinition.length; i++) {
+        if (colDefinition[i]["field"] !== "id") { //leave id field unchanged
             delete colDefinition[i]["editableTitle"];
-            delete colDefinition[i]["editor"]; 
+            delete colDefinition[i]["editor"];
             // console.log(colDefinition[i]);
         }
     }
 }
+
+// function filterFunc() {
+//     var filteredRows = table.getRows(true);
+//     // console.log(table.getRows(true));
+//     for (var i = 0; i < filteredRows.length; i++) {
+//         filteredRows[i].update({ "id": (i + 1) }); //update the row data for field "id"
+//     }
+// }

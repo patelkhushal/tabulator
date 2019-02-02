@@ -1,3 +1,6 @@
+# Author: Khushal Patel
+# Date Created: Jan 2019
+
 from flask import Flask, render_template, url_for, request, redirect, Markup
 import json
 import os
@@ -14,7 +17,8 @@ TABLE_DIR = "static/tables/table1"  # dir to save all the table's json files in
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', title="HOME")
+    print(url_for('static', filename='tables.js'))
+    return render_template('home.html', content_json=getJsonData("test_rows.json"), columns_json=getJsonData("test_cols.json"))
 
 
 def extract_field(json_list, field_name):
@@ -24,14 +28,17 @@ def extract_field(json_list, field_name):
             values.append(pair[field_name])
     return values
 
+
 def get_num_values(string_list):
     num_list = list()
     values = list()
     for s in string_list:
         num_string = s.split("/")
-        rr = re.findall("[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?", num_string[0])
+        rr = re.findall(
+            "[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?", num_string[0])
         values.append(int(rr[0]))
     return values
+
 
 @app.route("/dashboard")
 def chart():
@@ -42,22 +49,17 @@ def chart():
     with open('static/tables/table1/content.json') as f:
         data = json.load(f)
     # print(json.dumps(data, indent=4, sort_keys=True)) #to pretty print json
-    labels = extract_field(data, "Name")
-    #print(names)
-    values = extract_field(data, "progress")
+    labels = extract_field(data, "User")
+    # print(names)
+    values = extract_field(data, "Progress")
     values = get_num_values(values)
-    #print(progress_list)
+    # print(progress_list)
     return render_template('chart.html', values=values, labels=labels)
-
-
-@app.route("/about")
-def about():
-    return render_template("about.html", title="about me")
 
 
 @app.route('/results')
 def results():
-    return render_template('tables.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"))
+    return render_template('tables.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
 
 
 @app.route('/edit_table')
@@ -65,12 +67,12 @@ def edit_table():
     # jsondata = literal_eval(request.args.get('jsondata'))
     # coldata = literal_eval(request.args.get('coldata'))
     # return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"))
-    return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"))
+    return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
 
 
 @app.route('/changeTableContent', methods=['POST'])
 def changeTableContent():
-        # read incoming json
+    # read incoming json
     data = request.get_json(force=True)
     saveFile(data, "content.json")
     return ""
@@ -78,10 +80,25 @@ def changeTableContent():
 
 @app.route('/changeTableColumnNames', methods=['POST'])
 def changeTableColumnNames():
-        # read incoming json
+    # read incoming json
     data = request.get_json(force=True)
     saveFile(data, "columns.json")
     return ""
+
+
+@app.route('/changeTableTitle', methods=['POST'])
+def changeTableTitle():
+    # read incoming json
+    data = request.get_json(force=True)
+    saveFile(data, "title.json")
+    return ""
+
+
+def getTableTitle(filename):
+    url = os.path.join(SITE_ROOT, TABLE_DIR, filename)
+    data = json.load(open(url))
+    print(type(data["title"]))
+    return str(data["title"])
 
 
 def getJsonData(filename):
@@ -92,4 +109,4 @@ def getJsonData(filename):
 def saveFile(data, filename):
     file_url = os.path.join(SITE_ROOT, TABLE_DIR, filename)
     with open(file_url, 'w') as outfile:
-        json.dump(data, outfile)
+        json.dump(data, outfile, indent=4)
