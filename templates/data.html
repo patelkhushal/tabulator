@@ -13,6 +13,9 @@
     var coldata = {{ columns_json | tojson}};
     var tableTitleJson =  {{ table_title | tojson }} ;
     var tableTitle = tableTitleJson["title"];
+    var rowPath = '{{ rowPath }}' ;
+    var colPath = '{{ colPath }}' ;
+    
     var afterEditUrl = '{{ url_for( 'results') }}'; //go back to the previous view after editing the data
 </script>
 
@@ -31,7 +34,6 @@
     }
 
     .btn-group{
-        /* position: absolute; */
         left:10px;
     }
 
@@ -52,12 +54,7 @@
         font-size: 11pt;
         width: 9%;
     }
-
-    /* #table-title{
-        color:azure;
-        background-color:#4CAF50;
-    } */
-
+    
     #selectable{
         width: 16%;
     }

@@ -1,38 +1,49 @@
 {% extends "layout.html" %}
 {% block my_block %}
 
-<div align="center">
-    <div id="example-table" style="height: 525px; width: 90%"></div>
-</div>
+<!-- all tables will be appended to this div -->
+<div align="center" id="table-holder"></div>
 
-<div align="center" class="buttons"></div>
+
 <script type="text/javascript">
     var jsondata = {{ content_json | tojson }};
-    var coldata = {{ columns_json | tojson}}
-    var editUrl = '{{ url_for( 'edit_table') }}'
+    var coldata = {{ columns_json | tojson}};
+    var tableTitleJson = {{ table_title | tojson }};
+    var tableTitle = tableTitleJson["title"]; 
+    var tableTitleId = tableTitle.split(" ").join("-"); //replace spaces with dashes
+    var editUrl = '{{ url_for( 'data_edit') }}'
+    var rowPath = '{{ rowPath }}' ;
+    var colPath = '{{ colPath }}' ;
 </script>
 
 <style>
-    .btn-primary,
-    .btn-primary:hover,
-    .btn-primary:active,
-    .btn-primary:visited {
+    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
         background-color: #4CAF50 !important;
         border-color: green !important;
     }
-    .tabulator, .tabulator-header{
-        border-color:green;
+
+    .tabulator, .tabulator-header {
+        border-color: green;
     }
 
-    /* .tabulator-row{
-        border-color: green;
-    } */
+    .btn-group {
+        position: absolute;
+        left: 423px;
+    }
+
+    #row-count{
+        text-align: center;
+        width: 8%;
+        color: aliceblue;
+        background-color: #4CAF50;
+    }
+
+    #row-count-number {
+        color: #4CAF50
+    }
 </style>
 
-<!-- <button id="edit-table" onclick="window.location.href=editUrl;" type="button">Edit Table</button>
-<button id="delete-table" type="button">Delete Table</button> -->
-
-<script src="{{ url_for('static', filename='tables.js')}}"> </script>
+<script src="{{ url_for('static', filename='main.js')}}"> </script>
 
 
 

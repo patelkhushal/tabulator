@@ -17,8 +17,12 @@ TABLE_DIR = "static/tables/table1"  # dir to save all the table's json files in
 @app.route("/")
 @app.route("/home")
 def home():
-    print(url_for('static', filename='tables.js'))
-    return render_template('home.html', content_json=getJsonData("test_rows.json"), columns_json=getJsonData("test_cols.json"))
+    # row_path = url_for('static', filename='tables/table1/test_rows.json')
+    # col_path = url_for('static', filename='tables/table1/test_cols.json')
+    row_path = "test_rows.json"
+    col_path = "test_cols.json"
+    title_json = "test_title.json"
+    return render_template('home.html', content_json=getJsonData("test_rows.json"), columns_json=getJsonData("test_cols.json"), rowPath=row_path, colPath=col_path, table_title=getJsonData(title_json))
 
 
 def extract_field(json_list, field_name):
@@ -62,6 +66,11 @@ def results():
     return render_template('tables.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
 
 
+@app.route('/servers')
+def servers():
+    return render_template('tables.html', content_json=getJsonData("servers.json"), columns_json=getJsonData("server_cols.json"), table_title=getJsonData("serverTitle.json"))
+
+
 @app.route('/edit_table')
 def edit_table():
     # jsondata = literal_eval(request.args.get('jsondata'))
@@ -69,6 +78,42 @@ def edit_table():
     # return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"))
     return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
 
+@app.route('/edit_table_array', methods=['POST'])
+def edit_table_array():
+    jsondata = request.get_json(force=True)
+    # coldata = request.args.get('coldata')
+    row_path = jsondata["rowpath"]
+    col_path = jsondata["colpath"]
+    tableTitleJson = jsondata["tableTitleJson"]
+    print("**********************************************")
+    # return redirect(url_for('data.html'), content_json=jsondata["rowdata"], columns_json=jsondata["coldata"], row_path=row_path, col_path=col_path, table_title=tableTitleJson)
+    return redirect(url_for('data_edit', jsondata=jsondata))
+
+@app.route('/data_edit')
+def data_edit():
+    # jsondata = request.get_json(force=True)
+    jsondata = request.args['jsondata']
+    # coldata = request.args.get('coldata')
+    row_path = jsondata["rowpath"]
+    col_path = jsondata["colpath"]
+    tableTitleJson = jsondata["tableTitleJson"]
+    return render_template('data.html', content_json=jsondata["rowdata"], columns_json=jsondata["coldata"], row_path=row_path, col_path=col_path, table_title=tableTitleJson)
+
+@app.route('/submitRequest', methods=['POST'])
+def submitRequest():
+    # read incoming json
+    json_arr = request.get_json(force=True)
+    rowdata = json_arr["rowdata"]
+    coldata = json_arr["coldata"]
+    title_json = json_arr["tableTitleJson"]
+    row_path = json_arr["rowpath"]
+    col_path = json_arr["colpath"]
+
+    saveFile(rowdata, row_path)
+    saveFile(coldata, col_path)
+    saveFile(data, "title.json")
+
+    return ""
 
 @app.route('/changeTableContent', methods=['POST'])
 def changeTableContent():
@@ -97,8 +142,7 @@ def changeTableTitle():
 def getTableTitle(filename):
     url = os.path.join(SITE_ROOT, TABLE_DIR, filename)
     data = json.load(open(url))
-    print(type(data["title"]))
-    return str(data["title"])
+    return data["title"]
 
 
 def getJsonData(filename):
@@ -110,3 +154,7 @@ def saveFile(data, filename):
     file_url = os.path.join(SITE_ROOT, TABLE_DIR, filename)
     with open(file_url, 'w') as outfile:
         json.dump(data, outfile, indent=4)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

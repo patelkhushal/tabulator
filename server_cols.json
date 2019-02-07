@@ -1,0 +1,79 @@
+[
+    {
+        "field": "User",
+        "title": "User",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "User Name",
+        "title": "User Name",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Machine Name",
+        "title": "Machine Name",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Pw",
+        "title": "Pw",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "usage",
+        "title": "usage",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Note",
+        "title": "Note",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "",
+        "title": "",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "",
+        "title": "",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "",
+        "title": "",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "",
+        "title": "",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    },
+    {
+        "field": "Total Num",
+        "title": "Total Num",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search..."
+    }
+]

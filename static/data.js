@@ -1,13 +1,13 @@
 var currColComp; //current column (determined by the position of the cursor). Used in cellEditing attribute of tabulator object
 var currRowComp; //current row (determined by the position of the cursor). Used in cellEditing attribute of tabulator objec
-var once = false;
+var once = true;
 
 //process incoming jsondata and coldata. i.e., make them editable by changing column definition
 editableColData(coldata);
 
+//tabulator table object
 var table = new Tabulator("#example-table", {
     data: jsondata,
-    //Example: [{"Age": "12", "DOB": "14/05/1982", "Fav Color": "red", "Name": "Oli Bob", "id": 1}, {"Age": "1", "DOB": "14/05/1982", "Fav Color": "blue", "Name": "Mary May", "id": 2}, {"Age": "42", "DOB": "22/05/1982", "Fav Color": "green", "Name": "Christine Lobowski", "id": 3}, {"Age": "21", "DOB": "------", "Fav Color": "orange", "Name": "Kp", "id": 4}, {"Age": "12", "DOB": "01/08/1980", "Fav Color": "orange", "Name": "Brendon Philips", "id": 5}, {"Age": "16", "DOB": "31/01/1999", "Fav Color": "yellow", "Name": "Margret Marmajuke", "id": 6}]
     layout: "fitColumns",
     movableColumns: true,
     movableRows: true,
@@ -15,7 +15,6 @@ var table = new Tabulator("#example-table", {
     //scrollToRowPosition: "top",
     history: true,
     columns: coldata,
-    //Example: [{"editableTitle": true, "field": "id", "title": "id"}, {"editableTitle": true, "editor": "input", "field": "Name", "title": "Name"}, {"editableTitle": true, "editor": "input", "field": "Age", "title": "Age"}, {"editableTitle": true, "editor": "input", "field": "Fav Color", "title": "Fav Color"}, {"editableTitle": true, "editor": "input", "field": "DOB", "title": "DOB"}]
     cellEditing: function (cell) {
         //cell - cell component
         currColComp = cell.getColumn();
@@ -35,8 +34,8 @@ var table = new Tabulator("#example-table", {
         }
     },
     renderComplete: function () {
-        if (once) { once = false; }
-        else { animateRowCount(); }
+        if (once) { once = false; } //ignore the first time function is entered. Need this because tabulator runs this function before data is loaded into the table
+        else { animateRowCount(); } //update the "Totol Rows" of the table
     },
 
 });
@@ -71,9 +70,6 @@ $("<div>", {class: "float-md-right card", id: "row-count"}).appendTo(".buttons")
 $("<span>", { id: "row-count-number", class:"card" }).appendTo("#row-count").text(getRowCount());
 
 $("<div>", { class: "checkbox float-md-left card", id:"select-row-checkbox"}).appendTo(".buttons");
-// $('<input />', { class:"card", type: 'checkbox', id: "selectable", checked:true }).appendTo("#select-row-checkbox");
-// $('<label />', { id:"label-checkbox" }).text("Selectable Rows").appendTo("#select-row-checkbox");
-
 $('<label id="selectable-label"><input id="selectable" type="checkbox">Selectable Rows</label>').appendTo('#select-row-checkbox');
 
 
@@ -128,9 +124,13 @@ $("#post-data").on("click", function () {
     }
     formatIds(); //properly format row ids before sending the data to flask app
     uneditableColData(table.getColumnDefinitions()); //make col defintion uneditable befor submitting
-    ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()) //send changed column names to flask app
-    ajaxPostToFlask("/changeTableContent", table.getData()) //send changed table content to flask app
+
     tableTitleJson["title"] = $('#table-title').val();
+
+    // var json_array = {'rowdata':table.getData(), 'coldata':table.getColumnDefinitions(), 'rowpath':rowPath, 'colpath':colPath, 'tableTitleJson': tableTitleJson};
+    // ajaxPostToFlask("/submitRequest", json_array)
+    ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()); //send changed column names to flask app
+    ajaxPostToFlask("/changeTableContent", table.getData()); //send changed table content to flask app
     ajaxPostToFlask("/changeTableTitle", tableTitleJson);
     window.location.href = afterEditUrl; //go back to the previous view after editing the data
 });

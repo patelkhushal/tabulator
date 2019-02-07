@@ -13,7 +13,7 @@ row_dict_list = list() ##ollection of row dictionary objects. This will be the r
 
 counter = 0 #keep track of totoal number of rows and to add first csv row as column
 
-with open('data.csv', 'r') as csvFile:
+with open('SVT_machines.csv', 'r', encoding='utf-8-sig') as csvFile:
     reader = csv.reader(csvFile)
     for row in reader:
         counter = counter + 1
@@ -38,9 +38,9 @@ for column in columns: #standard column definition for each tabulator columns
     column_dict = dict() #reset the dict to add next values
 
 #save row and col dict list to a json file for tabulator to read
-with open('test_rows.json', 'w') as fp:
+with open('servers.json', 'w') as fp:
     json.dump(row_dict_list, fp, indent=4)
-with open('test_cols.json', 'w') as fp:
+with open('server_cols.json', 'w') as fp:
     json.dump(col_dict_list, fp, indent=4)
 
 csvFile.close()
