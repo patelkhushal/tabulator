@@ -13,10 +13,10 @@
     var coldata = {{ columns_json | tojson}};
     var tableTitleJson =  {{ table_title | tojson }} ;
     var tableTitle = tableTitleJson["title"];
-    var rowPath = '{{ rowPath }}' ;
-    var colPath = '{{ colPath }}' ;
-    
-    var afterEditUrl = '{{ url_for( 'results') }}'; //go back to the previous view after editing the data
+    var rowPath = '{{ row_path }}' ;
+    var colPath = '{{ col_path }}' ;
+    var titlePath = '{{ title_path }}'
+    var afterEditUrl = '{{ url_for( 'home') }}'; //go back to the previous view after editing the data
 </script>
 
 <style>

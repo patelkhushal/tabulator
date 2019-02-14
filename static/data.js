@@ -129,9 +129,11 @@ $("#post-data").on("click", function () {
 
     // var json_array = {'rowdata':table.getData(), 'coldata':table.getColumnDefinitions(), 'rowpath':rowPath, 'colpath':colPath, 'tableTitleJson': tableTitleJson};
     // ajaxPostToFlask("/submitRequest", json_array)
-    ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()); //send changed column names to flask app
-    ajaxPostToFlask("/changeTableContent", table.getData()); //send changed table content to flask app
-    ajaxPostToFlask("/changeTableTitle", tableTitleJson);
+    var json_array = { 'rowdata': table.getData(), 'coldata': table.getColumnDefinitions(), 'rowpath': rowPath, 'colpath': colPath, 'tableTitleJson': tableTitleJson, 'titlepath':titlePath };
+    // ajaxPostToFlask("/changeTableColumnNames", table.getColumnDefinitions()); //send changed column names to flask app
+    // ajaxPostToFlask("/changeTableContent", table.getData()); //send changed table content to flask app
+    // ajaxPostToFlask("/changeTableTitle", tableTitleJson);
+    ajaxPostToFlask("/submitRequest", json_array)
     window.location.href = afterEditUrl; //go back to the previous view after editing the data
 });
 

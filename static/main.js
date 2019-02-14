@@ -1,4 +1,4 @@
-var once = true; //used to ignore render complete function in tabulator object 
+// var once = true; //used to ignore render complete function in tabulator object 
 
 $("<h5>", { id: "table-title" }).text(tableTitle).appendTo("#table-holder") //table title header
 $("<div>", { id: tableTitleId, style: "height: 550px; width: 90%" }).appendTo("#table-holder"); //table object div
@@ -10,8 +10,8 @@ var table = new Tabulator("#" + tableTitleId, {
     layout: "fitColumns",
     columns: coldata, //column definition json data supplied by flask app
     renderComplete: function () { //runs everytime table view gets updated
-        if (once) { once = false; }
-        else { animateRowCount(getRowCount(), "row-count-number"); } //update row counter
+        try { animateRowCount(getRowCount(), "row-count-number");  } //update row counter 
+        catch (err) {} //don't do anything
     },
 });
 
@@ -55,10 +55,8 @@ $("<span>", { id: "row-count-number", class: "card" }).appendTo("#row-count").te
 
 //edit table button on click
 $("#edit-table").on("click", function () {
-    var json_array = {'rowdata':jsondata, 'coldata':coldata, 'rowpath':rowPath, 'colpath':colPath, 'tableTitleJson':tableTitleJson};
-    // console.log(rowPath);
-    // console.log(colPath);
-    ajaxPostToFlask("/edit_table_array", json_array);
+    var json_array = { 'rowdata': jsondata, 'coldata': coldata, 'rowpath': rowPath, 'colpath': colPath, 'tableTitleJson': tableTitleJson, 'titlepath':titlePath };
+    editUrl = editUrl.replace("somevar", JSON.stringify(json_array)); //send json_array variable to flask
     window.location.href = editUrl;
 });
 

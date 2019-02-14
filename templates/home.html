@@ -6,14 +6,11 @@
 
 
 <script type="text/javascript">
-    var jsondata = {{ content_json | tojson }};
-    var coldata = {{ columns_json | tojson}};
-    var tableTitleJson = {{ table_title | tojson }};
-    var tableTitle = tableTitleJson["title"]; 
-    var tableTitleId = tableTitle.split(" ").join("-"); //replace spaces with dashes
-    var editUrl = '{{ url_for( 'data_edit') }}'
-    var rowPath = '{{ rowPath }}' ;
-    var colPath = '{{ colPath }}' ;
+    {% for tables in jsons %}
+        {{ trend }} 
+    {% endfor %}
+    var table_jsons = {{ jsons | safe }};
+    console.log(table_jsons);
 </script>
 
 <style>

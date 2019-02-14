@@ -1,1 +1,30 @@
-[{"field": "id", "title": "id"}, {"field": "Name", "title": "Name"}, {"field": "Age", "title": "Age"}, {"field": "Fav Color", "title": "Fav Color"}, {"field": "DOB", "title": "DOB"}]
+[
+    {
+        "field": "id",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search...",
+        "title": "id"
+    },
+    {
+        "field": "Client Machines",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search...",
+        "title": "Client Machines"
+    },
+    {
+        "field": "User",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search...",
+        "title": "User"
+    },
+    {
+        "field": "Usage",
+        "formatter": "textarea",
+        "headerFilter": true,
+        "headerFilterPlaceholder": "Search...",
+        "title": "Usage"
+    }
+]

@@ -40,8 +40,8 @@ function emptyHeaderFilters() {
     else { return false; }
 }
 
-//div to hold all the buttons
-$("<div>", { class: "btn-group"}).appendTo(".buttons");
+//span to hold all the buttons
+$("<span>", { class: "btn-group"}).appendTo(".buttons");
 
 //edit, add, delete and download buttons
 $('<input type="button" id="edit-table" value="Edit Table" class="btn btn-primary"/>').appendTo(".btn-group");
@@ -50,11 +50,13 @@ $('<input type="button" id="add-table" value="Add Table" class="btn btn-primary"
 $('<input type="button" id="download-table" value="Download csv" class="btn btn-primary"/>').appendTo(".btn-group");
 
 //row counter card
-$("<div>", {class: "border border-success float-md-right card", id: "row-count"}).appendTo(".buttons").text("Total Rows");
+$("<span>", {class: "border border-success float-md-right card", id: "row-count"}).appendTo(".buttons").text("Total Rows");
 $("<span>", { id: "row-count-number", class:"card" }).appendTo("#row-count").text(getRowCount());
 
 //edit table button on click
 $("#edit-table").on("click", function () {
+    var json_array = { 'rowdata': jsondata, 'coldata': coldata, 'rowpath': rowPath, 'colpath': colPath, 'tableTitleJson': tableTitleJson, 'titlepath':titlePath };
+    editUrl = editUrl.replace("somevar", JSON.stringify(json_array)); //send json_array variable to flask
     window.location.href = editUrl;
 });
 

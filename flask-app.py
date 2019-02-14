@@ -3,6 +3,7 @@
 
 from flask import Flask, render_template, url_for, request, redirect, Markup
 import json
+import urllib.parse
 import os
 from ast import literal_eval
 import re
@@ -17,14 +18,50 @@ TABLE_DIR = "static/tables/table1"  # dir to save all the table's json files in
 @app.route("/")
 @app.route("/home")
 def home():
-    # row_path = url_for('static', filename='tables/table1/test_rows.json')
-    # col_path = url_for('static', filename='tables/table1/test_cols.json')
-    row_path = "test_rows.json"
-    col_path = "test_cols.json"
-    title_json = "test_title.json"
-    return render_template('home.html', content_json=getJsonData("test_rows.json"), columns_json=getJsonData("test_cols.json"), rowPath=row_path, colPath=col_path, table_title=getJsonData(title_json))
+    jsons = getTableJsons(getTablesPaths())
+    print (jsons)
+    return render_template('home.html', jsons=jsons)
+    # return render_template('home.html',\
+    #     content_json=getJsonData("test_rows.json"),\
+    #       columns_json=getJsonData("test_cols.json"),\
+    #         row_path="test_rows.json",\
+    #             col_path="test_cols.json",\
+    #                 table_title=getJsonData("test_title.json"),\
+    #                     title_path="test_title.json")
 
 
+def getTableJsons(tablePaths):
+    jsons = list()
+    for table in tablePaths:
+        table_jsons = list()
+        for json in table:
+            table_jsons.append(getJsonDatafromPath(json))
+        jsons.append(table_jsons)
+    return jsons
+
+def getJsonDatafromPath(path):
+    print(path)
+    return json.load(open(path))
+
+#returs a list of list where each list contains row, column and title json of all the tables in tables directory
+def getTablesPaths():
+    tables_path = list()
+    for root, dirs, files in os.walk(os.path.abspath(SITE_ROOT+TABLE_DIR)):
+        for directory in dirs:
+            tables_path.append(os.path.join(root, directory))
+    tables_path = sorted(tables_path)
+
+    tables = list()
+    for table in tables_path:
+        table_jsons = sorted(os.listdir(table))
+        table_jsons_path = list()
+        for filename in table_jsons:
+            if not filename.startswith('.'):
+                table_jsons_path.append(os.path.join(table, filename))
+        tables.append(sorted(table_jsons_path))
+
+    return tables
+    
 def extract_field(json_list, field_name):
     values = list()
     for pair in json_list:
@@ -63,41 +100,26 @@ def chart():
 
 @app.route('/results')
 def results():
-    return render_template('tables.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
+    return render_template('tables.html',\
+        content_json=getJsonData("content.json"),\
+          columns_json=getJsonData("columns.json"),\
+            row_path="content.json",\
+                col_path="columns.json",\
+                    table_title=getJsonData("title.json"),\
+                        title_path="title.json")
 
 
-@app.route('/servers')
-def servers():
-    return render_template('tables.html', content_json=getJsonData("servers.json"), columns_json=getJsonData("server_cols.json"), table_title=getJsonData("serverTitle.json"))
-
-
-@app.route('/edit_table')
-def edit_table():
-    # jsondata = literal_eval(request.args.get('jsondata'))
-    # coldata = literal_eval(request.args.get('coldata'))
-    # return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"))
-    return render_template('data.html', content_json=getJsonData("content.json"), columns_json=getJsonData("columns.json"), table_title=getJsonData("title.json"))
-
-@app.route('/edit_table_array', methods=['POST'])
-def edit_table_array():
-    jsondata = request.get_json(force=True)
-    # coldata = request.args.get('coldata')
-    row_path = jsondata["rowpath"]
-    col_path = jsondata["colpath"]
-    tableTitleJson = jsondata["tableTitleJson"]
-    print("**********************************************")
-    # return redirect(url_for('data.html'), content_json=jsondata["rowdata"], columns_json=jsondata["coldata"], row_path=row_path, col_path=col_path, table_title=tableTitleJson)
-    return redirect(url_for('data_edit', jsondata=jsondata))
-
-@app.route('/data_edit')
+@app.route('/data_edit', methods=['POST', 'GET'])
 def data_edit():
-    # jsondata = request.get_json(force=True)
-    jsondata = request.args['jsondata']
-    # coldata = request.args.get('coldata')
-    row_path = jsondata["rowpath"]
-    col_path = jsondata["colpath"]
-    tableTitleJson = jsondata["tableTitleJson"]
-    return render_template('data.html', content_json=jsondata["rowdata"], columns_json=jsondata["coldata"], row_path=row_path, col_path=col_path, table_title=tableTitleJson)
+    jsondata = json.loads(request.args.get('jsondata'))
+    return render_template('data.html',\
+        content_json=jsondata["rowdata"],\
+            columns_json=jsondata["coldata"],\
+                row_path=jsondata["rowpath"],\
+                    col_path=jsondata["colpath"],\
+                        table_title=jsondata["tableTitleJson"],\
+                            title_path=jsondata["titlepath"])
+
 
 @app.route('/submitRequest', methods=['POST'])
 def submitRequest():
@@ -108,12 +130,15 @@ def submitRequest():
     title_json = json_arr["tableTitleJson"]
     row_path = json_arr["rowpath"]
     col_path = json_arr["colpath"]
+    title_path = json_arr["titlepath"]
 
+    print(row_path)
     saveFile(rowdata, row_path)
     saveFile(coldata, col_path)
-    saveFile(data, "title.json")
+    saveFile(title_json,title_path)
 
     return ""
+
 
 @app.route('/changeTableContent', methods=['POST'])
 def changeTableContent():

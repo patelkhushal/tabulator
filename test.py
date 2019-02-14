@@ -1,48 +1,41 @@
 import csv
 import json
+import os
+from flask import Flask, render_template, url_for, request, redirect, Markup
+
+SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+TABLE_DIR = "/static/tables/"  # dir to save all the table's json files in
+
+tables_path = list()
+for root, dirs, files in os.walk(os.path.abspath(SITE_ROOT+TABLE_DIR)):
+    for directory in dirs:
+        tables_path.append(os.path.join(root, directory))
+tables_path = sorted(tables_path)
+
+tables = list()
+for table in tables_path:
+    table_jsons = sorted(os.listdir(table))
+    table_jsons_path = list()
+    for filename in table_jsons:
+        table_jsons_path.append(os.path.join(table, filename))
+    tables.append(sorted(table_jsons_path))
 
 
+def getTablePaths():
+    tables_path = list()
+    for root, dirs, files in os.walk(os.path.abspath(SITE_ROOT+TABLE_DIR)):
+    for directory in dirs:
+        tables_path.append(os.path.join(root, directory))
 
 
+tables_path = sorted(tables_path)
 
+tables = list()
+for table in tables_path:
+    table_jsons = sorted(os.listdir(table))
+    table_jsons_path = list()
+    for filename in table_jsons:
+        table_jsons_path.append(os.path.join(table, filename))
+    tables.append(sorted(table_jsons_path))
 
-# columns = list()
-# column_dict = dict()
-# col_dict_list = list()
-
-# row_dict = dict()
-# row_dict_list = list()
-
-# counter = 0
-
-# with open('data.csv', 'r') as csvFile:
-#     reader = csv.reader(csvFile)
-#     for row in reader:
-#         counter = counter + 1
-#         if counter == 1:
-#             columns = row
-#         else:
-#             i = 0
-#             for value in row:
-#                 row_dict[columns[i]] = row[i]
-#                 i = i + 1
-#             row_dict_list.append(row_dict)
-#             row_dict = dict()
-
-
-# for column in columns:
-#     column_dict["field"] = column
-#     column_dict["title"] = column
-#     column_dict["formatter"] = "textarea"
-#     column_dict["headerFilter"] = True
-#     column_dict["headerFilterPlaceholder"] = "Search..."
-#     col_dict_list.append(column_dict)
-#     column_dict = dict()
-
-# with open('test_rows.json', 'w') as fp:
-#     json.dump(row_dict_list, fp, indent=4)
-
-# with open('test_cols.json', 'w') as fp:
-#     json.dump(col_dict_list, fp, indent=4)
-
-# csvFile.close()
+print(tables)
