@@ -6,6 +6,8 @@
 
 
 <script type="text/javascript">
+    var ajaxUrlCall = '{{ url_for('test') }}';
+    var ajaxUrlCall2 = '{{ url_for('test2') }}';
     var jsondata = {{ content_json | tojson }};
     var coldata = {{ columns_json | tojson}};
     var tableTitleJson = {{ table_title | tojson }};

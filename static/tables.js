@@ -1,22 +1,31 @@
 var once = true; //used to ignore render complete function in tabulator object 
 
-$("<h5>", {id:"table-title"}).text(tableTitle).appendTo("#table-holder") //table title header
-$("<div>", {id: tableTitleId, style:"height: 550px; width: 90%"}).appendTo("#table-holder"); //table object div
-$("<div>", {class: "buttons", style:"width: 90%"}).appendTo("#table-holder"); //buttons div
+$("<h5>", { id: "table-title" }).text(tableTitle).appendTo("#table-holder") //table title header
+$("<div>", { id: tableTitleId, style: "height: 550px; width: 90%" }).appendTo("#table-holder"); //table object div
+$("<div>", { class: "buttons", style: "width: 90%" }).appendTo("#table-holder"); //buttons div
 
 //tabulator table object
 var table = new Tabulator("#" + tableTitleId, {
-    data: jsondata, //json data supplied by flask app
+    // data: jsondata, //json data supplied by flask app
     layout: "fitColumns",
-    columns: coldata, //column definition json data supplied by flask app
+    // columns: coldata, //column definition json data supplied by flask app
     renderComplete: function () { //runs everytime table view gets updated
         if (once) { once = false; }
         else { animateRowCount(getRowCount(), "row-count-number"); } //update row counter
     },
 });
 
+console.log(coldata);
+// console.log()
+// table.setColumns(coldata);
+// console.log(ajaxUrlCall2);
+// table.setColumns(JSON.parse(ajaxUrlCall2));
+
+$.post(ajaxUrlCall2, function (data) { table.setColumns(JSON.parse(data)); });
+table.setData(ajaxUrlCall);
+
 //animates from 0 to a number passed to it and adds it to the id passed
-function animateRowCount(animateNum, id){
+function animateRowCount(animateNum, id) {
     $({ Counter: 0 }).animate({
         Counter: animateNum
     }, {
@@ -41,7 +50,7 @@ function emptyHeaderFilters() {
 }
 
 //span to hold all the buttons
-$("<span>", { class: "btn-group"}).appendTo(".buttons");
+$("<span>", { class: "btn-group" }).appendTo(".buttons");
 
 //edit, add, delete and download buttons
 $('<input type="button" id="edit-table" value="Edit Table" class="btn btn-primary"/>').appendTo(".btn-group");
@@ -50,12 +59,12 @@ $('<input type="button" id="add-table" value="Add Table" class="btn btn-primary"
 $('<input type="button" id="download-table" value="Download csv" class="btn btn-primary"/>').appendTo(".btn-group");
 
 //row counter card
-$("<span>", {class: "border border-success float-md-right card", id: "row-count"}).appendTo(".buttons").text("Total Rows");
-$("<span>", { id: "row-count-number", class:"card" }).appendTo("#row-count").text(getRowCount());
+$("<span>", { class: "border border-success float-md-right card", id: "row-count" }).appendTo(".buttons").text("Total Rows");
+$("<span>", { id: "row-count-number", class: "card" }).appendTo("#row-count").text(getRowCount());
 
 //edit table button on click
 $("#edit-table").on("click", function () {
-    var json_array = { 'rowdata': jsondata, 'coldata': coldata, 'rowpath': rowPath, 'colpath': colPath, 'tableTitleJson': tableTitleJson, 'titlepath':titlePath };
+    var json_array = { 'rowdata': jsondata, 'coldata': coldata, 'rowpath': rowPath, 'colpath': colPath, 'tableTitleJson': tableTitleJson, 'titlepath': titlePath };
     editUrl = editUrl.replace("somevar", JSON.stringify(json_array)); //send json_array variable to flask
     window.location.href = editUrl;
 });

@@ -12,15 +12,14 @@ app = Flask(__name__)
 
 # path of this file's parent directory
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-TABLE_DIR = "static/tables/table1"  # dir to save all the table's json files in
-
+TABLE_DIR = SITE_ROOT + "/static/tables/"  # dir to save all the tables and their respective json files
 
 @app.route("/")
 @app.route("/home")
 def home():
-    jsons = getTableJsons(getTablesPaths())
-    print (jsons)
-    return render_template('home.html', jsons=jsons)
+    # get total number of table directories from TABLE_DIR path
+    total_tables = len([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)]) #don't need the hidden directory/files or any files
+    return render_template('home.html', total_tables=total_tables)
     # return render_template('home.html',\
     #     content_json=getJsonData("test_rows.json"),\
     #       columns_json=getJsonData("test_cols.json"),\
@@ -29,38 +28,13 @@ def home():
     #                 table_title=getJsonData("test_title.json"),\
     #                     title_path="test_title.json")
 
+@app.route('/getTableData', methods=['POST', 'GET'])
+def getTableData():
+    file_path = request.args.get('filepath')
+    print("*********huiherfjerbfjkerjkfnkjenrfjkneklrnfk*************")
 
-def getTableJsons(tablePaths):
-    jsons = list()
-    for table in tablePaths:
-        table_jsons = list()
-        for json in table:
-            table_jsons.append(getJsonDatafromPath(json))
-        jsons.append(table_jsons)
-    return jsons
+    return json.dumps(json.load(open(os.path.join(TABLE_DIR, file_path)))) #get json data from /TABLE_DIR/file_path
 
-def getJsonDatafromPath(path):
-    print(path)
-    return json.load(open(path))
-
-#returs a list of list where each list contains row, column and title json of all the tables in tables directory
-def getTablesPaths():
-    tables_path = list()
-    for root, dirs, files in os.walk(os.path.abspath(SITE_ROOT+TABLE_DIR)):
-        for directory in dirs:
-            tables_path.append(os.path.join(root, directory))
-    tables_path = sorted(tables_path)
-
-    tables = list()
-    for table in tables_path:
-        table_jsons = sorted(os.listdir(table))
-        table_jsons_path = list()
-        for filename in table_jsons:
-            if not filename.startswith('.'):
-                table_jsons_path.append(os.path.join(table, filename))
-        tables.append(sorted(table_jsons_path))
-
-    return tables
     
 def extract_field(json_list, field_name):
     values = list()

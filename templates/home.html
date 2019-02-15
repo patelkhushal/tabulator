@@ -2,15 +2,13 @@
 {% block my_block %}
 
 <!-- all tables will be appended to this div -->
-<div align="center" id="table-holder"></div>
+<div align="center" id="table-holder">lmao</div>
 
 
 <script type="text/javascript">
-    {% for tables in jsons %}
-        {{ trend }} 
-    {% endfor %}
-    var table_jsons = {{ jsons | safe }};
-    console.log(table_jsons);
+    var totalTables = {{ total_tables | int }};
+    var ajaxUrlCall = "{{ url_for('getTableData', filepath='var1') }}"; //var1 and var2 will be replaced by appropriate var in main.js file
+
 </script>
 
 <style>
