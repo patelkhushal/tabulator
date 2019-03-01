@@ -4,7 +4,7 @@
 from flask import Flask, render_template, url_for, request, redirect, Markup
 import json
 import urllib.parse
-import os
+import os, shutil
 from ast import literal_eval
 import re
 
@@ -17,25 +17,64 @@ TABLE_DIR = SITE_ROOT + "/static/tables/"  # dir to save all the tables and thei
 @app.route("/")
 @app.route("/home")
 def home():
-    # get total number of table directories from TABLE_DIR path
-    total_tables = len([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)]) #don't need the hidden directory/files or any files
-    return render_template('home.html', total_tables=total_tables)
-    # return render_template('home.html',\
-    #     content_json=getJsonData("test_rows.json"),\
-    #       columns_json=getJsonData("test_cols.json"),\
-    #         row_path="test_rows.json",\
-    #             col_path="test_cols.json",\
-    #                 table_title=getJsonData("test_title.json"),\
-    #                     title_path="test_title.json")
+    # get table names from TABLE_DIR path
+    #don't need the hidden directory/files or any files
+    table_names = sorted([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)])
+    return render_template("home.html", table_names=table_names)
+
+
+@app.route('/side')
+def side():
+    return render_template("side.html")
+
+@app.route('/sidebar')
+def sidebar():
+    return render_template("sidebar.html")
 
 @app.route('/getTableData', methods=['POST', 'GET'])
 def getTableData():
     file_path = request.args.get('filepath')
-    print("*********huiherfjerbfjkerjkfnkjenrfjkneklrnfk*************")
-
     return json.dumps(json.load(open(os.path.join(TABLE_DIR, file_path)))) #get json data from /TABLE_DIR/file_path
 
-    
+@app.route('/add_table', methods=['POST', 'GET'])
+def add_table():
+    # table_dir_name = json.loads(request.args.get('jsondata'))["tableDir"] #get tableDir name (key) from the supplied json
+    table_names = sorted([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)])
+    return render_template('data.html', table_names=table_names)
+
+@app.route('/data_edit', methods=['POST', 'GET'])
+def data_edit():
+    table_dir_name = json.loads(request.args.get('jsondata'))["tableDir"] #get tableDir name (key) from the supplied json
+    table_names = sorted([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)])
+    return render_template('data.html', table_dir_name=table_dir_name, table_names=table_names)
+
+
+@app.route('/submitRequest', methods=['POST'])
+def submitRequest():
+    # read incoming json
+    json_arr = request.get_json(force=True)
+
+    rowdata = json_arr["rowdata"]
+    coldata = json_arr["coldata"]
+    table_title = json_arr["tabletitle"]
+    old_table_dir_name = json_arr["oldTableDirName"]
+
+    table_dir = table_title.replace(" ", "-")
+    table_title_json = { "title": table_title }
+
+    table_names = sorted([name for name in os.listdir(TABLE_DIR) if not name.startswith('.') and not os.path.isfile(name)])
+    if (old_table_dir_name not in table_names):
+        os.mkdir(os.path.join(TABLE_DIR, table_dir))
+    else:
+        os.rename(os.path.join(TABLE_DIR, old_table_dir_name), os.path.join(TABLE_DIR, table_dir))
+
+    saveFile(rowdata, os.path.join(table_dir, "content.json"))
+    saveFile(coldata, os.path.join(table_dir, "columns.json"))
+    saveFile(table_title_json,os.path.join(table_dir, "title.json"))
+
+    return ""
+
+
 def extract_field(json_list, field_name):
     values = list()
     for pair in json_list:
@@ -70,73 +109,6 @@ def chart():
     values = get_num_values(values)
     # print(progress_list)
     return render_template('chart.html', values=values, labels=labels)
-
-
-@app.route('/results')
-def results():
-    return render_template('tables.html',\
-        content_json=getJsonData("content.json"),\
-          columns_json=getJsonData("columns.json"),\
-            row_path="content.json",\
-                col_path="columns.json",\
-                    table_title=getJsonData("title.json"),\
-                        title_path="title.json")
-
-
-@app.route('/data_edit', methods=['POST', 'GET'])
-def data_edit():
-    jsondata = json.loads(request.args.get('jsondata'))
-    return render_template('data.html',\
-        content_json=jsondata["rowdata"],\
-            columns_json=jsondata["coldata"],\
-                row_path=jsondata["rowpath"],\
-                    col_path=jsondata["colpath"],\
-                        table_title=jsondata["tableTitleJson"],\
-                            title_path=jsondata["titlepath"])
-
-
-@app.route('/submitRequest', methods=['POST'])
-def submitRequest():
-    # read incoming json
-    json_arr = request.get_json(force=True)
-    rowdata = json_arr["rowdata"]
-    coldata = json_arr["coldata"]
-    title_json = json_arr["tableTitleJson"]
-    row_path = json_arr["rowpath"]
-    col_path = json_arr["colpath"]
-    title_path = json_arr["titlepath"]
-
-    print(row_path)
-    saveFile(rowdata, row_path)
-    saveFile(coldata, col_path)
-    saveFile(title_json,title_path)
-
-    return ""
-
-
-@app.route('/changeTableContent', methods=['POST'])
-def changeTableContent():
-    # read incoming json
-    data = request.get_json(force=True)
-    saveFile(data, "content.json")
-    return ""
-
-
-@app.route('/changeTableColumnNames', methods=['POST'])
-def changeTableColumnNames():
-    # read incoming json
-    data = request.get_json(force=True)
-    saveFile(data, "columns.json")
-    return ""
-
-
-@app.route('/changeTableTitle', methods=['POST'])
-def changeTableTitle():
-    # read incoming json
-    data = request.get_json(force=True)
-    saveFile(data, "title.json")
-    return ""
-
 
 def getTableTitle(filename):
     url = os.path.join(SITE_ROOT, TABLE_DIR, filename)

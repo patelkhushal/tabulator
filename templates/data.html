@@ -9,56 +9,62 @@
 </div>
 
 <script type="text/javascript">
-    var jsondata = {{ content_json | tojson }};
-    var coldata = {{ columns_json | tojson}};
-    var tableTitleJson =  {{ table_title | tojson }} ;
-    var tableTitle = tableTitleJson["title"];
-    var rowPath = '{{ row_path }}' ;
-    var colPath = '{{ col_path }}' ;
-    var titlePath = '{{ title_path }}'
+    var tableNames = {{ table_names | safe }};
+    var tableDirName; //leave this uninitialized. This variable is used to determine if new table is added or an existing table is being edited
+    var tableTitle = "";
+    var oldTableDirName = "";
+    if ('{{ table_dir_name }}') {
+        tableDirName = '{{ table_dir_name }}';
+        oldTableDirName = '{{ table_dir_name }}';
+        tableTitle = tableDirName.split("-").join(" "); //replace dashes with spaces
+        var ajaxUrlCall = "{{ url_for('getTableData', filepath='var1') }}"; //var1 and var2 will be replaced by appropriate var in main.js file
+    }
     var afterEditUrl = '{{ url_for( 'home') }}'; //go back to the previous view after editing the data
 </script>
 
 <style>
-    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
-    background-color: #4CAF50 !important;
-    border-color: green !important;
-    }
-    
-    .tabulator, .tabulator-header{
-        border-color:green;
+    .btn-primary,
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-primary:visited {
+        background-color: #4CAF50 !important;
+        border-color: green !important;
     }
 
-    .tabulator-row.tabulator-selected:hover{
+    .tabulator,
+    .tabulator-header {
+        border-color: green;
+    }
+
+    .tabulator-row.tabulator-selected:hover {
         background: #769bcc !important
     }
 
-    .btn-group{
-        left:10px;
+    .btn-group {
+        left: 10px;
     }
 
-    #row-count{
-        text-align: center; 
+    #row-count {
+        text-align: center;
         width: 8%;
         color: aliceblue;
         background-color: #4CAF50;
     }
 
-    #row-count-number{
+    #row-count-number {
         color: #4CAF50
     }
 
-    #select-row-checkbox{
-        color:azure;
+    #select-row-checkbox {
+        color: azure;
         background-color: #4CAF50;
         font-size: 11pt;
         width: 9%;
     }
-    
-    #selectable{
+
+    #selectable {
         width: 16%;
     }
-
 </style>
 
 

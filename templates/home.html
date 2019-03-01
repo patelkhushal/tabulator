@@ -1,23 +1,130 @@
 {% extends "layout.html" %}
 {% block my_block %}
 
+
+<!-- <nav id="navbar" class="navbar navbar-expand-lg navbar-dark" style="background-color: #4CAF50;"> -->
+<!-- <div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3>Bootstrap Sidebar</h3>
+        </div>
+
+        <ul class="list-unstyled components">
+            <p>Dummy Heading</p>
+            <li class="active">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                        <a href="#">Home 1</a>
+                    </li>
+                    <li>
+                        <a href="#">Home 2</a>
+                    </li>
+                    <li>
+                        <a href="#">Home 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">About</a>
+            </li>
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="#">Page 1</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 2</a>
+                    </li>
+                    <li>
+                        <a href="#">Page 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Portfolio</a>
+            </li>
+            <li>
+                <a href="#">Contact</a>
+            </li>
+        </ul>
+
+    </nav> -->
+    <!-- Page Content -->
+    <!-- <div id="content">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+
+                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
+                    <span>Toggle Sidebar</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+</div> -->
+
+
 <!-- all tables will be appended to this div -->
-<div align="center" id="table-holder">lmao</div>
+<br>
+<div align="center" id="main-table-holder"></div>
 
 
 <script type="text/javascript">
-    var totalTables = {{ total_tables | int }};
-    var ajaxUrlCall = "{{ url_for('getTableData', filepath='var1') }}"; //var1 and var2 will be replaced by appropriate var in main.js file
+    var ajaxUrlCallGetData = "{{ url_for('getTableData', filepath='var1') }}"; //var1 will be replaced by appropriate var in main.js file
+    var tableNames = {{ table_names | safe }};
+    var editUrl = "{{ url_for('data_edit', jsondata='somevar') }}"; //somevar will be replaced by appropriate var in main.js file
+    var addTableUrl = "{{ url_for('add_table') }}";
 
+    // $(document).ready(function () {
+
+    //     $("#sidebar").mCustomScrollbar({
+    //         theme: "minimal"
+    //     });
+
+    //     $('#sidebarCollapse').on('click', function () {
+    //         // open or close navbar
+    //         $('#sidebar').toggleClass('active');
+    //         // close dropdowns
+    //         $('.collapse.in').toggleClass('in');
+    //         // and also adjust aria-expanded attributes we use for the open/closed arrows
+    //         // in our CSS
+    //         $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    //     });
+
+    // });
 </script>
 
 <style>
-    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    /* .wrapper {
+        display: flex;
+        width: 100%;
+    }
+
+    #sidebar {
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 999;
+        background: #7386D5;
+        color: #fff;
+        transition: all 0.3s;
+    } */
+
+    .btn-primary,
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-primary:visited {
         background-color: #4CAF50 !important;
         border-color: green !important;
     }
 
-    .tabulator, .tabulator-header {
+    .tabulator,
+    .tabulator-header {
         border-color: green;
     }
 
@@ -26,12 +133,9 @@
         left: 423px;
     }
 
-    #row-count{
-        text-align: center;
-        width: 8%;
-        color: aliceblue;
-        background-color: #4CAF50;
-    }
+    /* #row-count {
+        text-align: center; width: 8%; color: aliceblue; background-color: #4CAF50;
+    } */
 
     #row-count-number {
         color: #4CAF50
@@ -39,7 +143,6 @@
 </style>
 
 <script src="{{ url_for('static', filename='main.js')}}"> </script>
-
 
 
 {% endblock my_block %}

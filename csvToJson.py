@@ -9,9 +9,9 @@ column_dict = dict() #column dict to hold single tabulator column definition
 col_dict_list = list() #collection of column dictionary objects. This will be the column definition of the table
 
 row_dict = dict() #row dict to hold single tabulator row
-row_dict_list = list() ##ollection of row dictionary objects. This will be the row contents of the table
+row_dict_list = list() #collection of row dictionary objects. This will be the row contents of the table
 
-counter = 0 #keep track of totoal number of rows and to add first csv row as column
+counter = 0 #keep track of total number of rows and to add first csv row as column
 
 with open('SVT_machines.csv', 'r', encoding='utf-8-sig') as csvFile:
     reader = csv.reader(csvFile)
