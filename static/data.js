@@ -2,52 +2,6 @@ var currColComp; //current column (determined by the position of the cursor). Us
 var currRowComp; //current row (determined by the position of the cursor). Used in cellEditing attribute of tabulator objec
 var once = true;
 
-function getData(url) {
-    return new Promise(function (resolve, reject) {
-        $.post(url, function (data) {
-            if (data)
-                resolve(data)
-            reject(new Error('Request to get data failed!'))
-        });
-    })
-}
-
-function editableColData(colDefinition) {
-    for (i = 0; i < colDefinition.length; i++) {
-        if (colDefinition[i]["field"] !== "id") { //leave id field uneditable
-            colDefinition[i]["editableTitle"] = true;
-            colDefinition[i]["editor"] = "textarea";
-        }
-    }
-    return colDefinition;
-}
-
-function uneditableColData(colDefinition) {
-    for (i = 0; i < colDefinition.length; i++) {
-        if (colDefinition[i]["field"] !== "id") { //leave id field unchanged
-            delete colDefinition[i]["editableTitle"];
-            delete colDefinition[i]["editor"];
-            // console.log(colDefinition[i]);
-        }
-    }
-}
-
-function getTableData(columnDataUrl, rowDataUrl, tableId) {
-    return new Promise(function (resolve, reject) {
-        getData(columnDataUrl).then(function (columns) {
-            columns = editableColData(JSON.parse(columns)); //process incoming coldata. i.e., make them editable by changing column definition
-            table.setColumns(columns);
-        }).then(function () {
-            getData(rowDataUrl).then(function (rows) {
-                table.setData(JSON.parse(rows))
-                resolve();
-            })
-        }), function () {
-            reject();
-        }
-    })
-}
-
 //tabulator table object
 var table = new Tabulator("#example-table", {
     // data: jsondata,
@@ -268,6 +222,52 @@ function generateEditButtons() {
 }
 
 
+
+function getData(url) {
+    return new Promise(function (resolve, reject) {
+        $.post(url, function (data) {
+            if (data)
+                resolve(data)
+            reject(new Error('Request to get data failed!'))
+        });
+    })
+}
+
+function editableColData(colDefinition) {
+    for (i = 0; i < colDefinition.length; i++) {
+        if (colDefinition[i]["field"] !== "id") { //leave id field uneditable
+            colDefinition[i]["editableTitle"] = true;
+            colDefinition[i]["editor"] = "textarea";
+        }
+    }
+    return colDefinition;
+}
+
+function uneditableColData(colDefinition) {
+    for (i = 0; i < colDefinition.length; i++) {
+        if (colDefinition[i]["field"] !== "id") { //leave id field unchanged
+            delete colDefinition[i]["editableTitle"];
+            delete colDefinition[i]["editor"];
+            // console.log(colDefinition[i]);
+        }
+    }
+}
+
+function getTableData(columnDataUrl, rowDataUrl, tableId) {
+    return new Promise(function (resolve, reject) {
+        getData(columnDataUrl).then(function (columns) {
+            columns = editableColData(JSON.parse(columns)); //process incoming coldata. i.e., make them editable by changing column definition
+            table.setColumns(columns);
+        }).then(function () {
+            getData(rowDataUrl).then(function (rows) {
+                table.setData(JSON.parse(rows))
+                resolve();
+            })
+        }), function () {
+            reject();
+        }
+    })
+}
 
 function animateRowCount() {
     $({ Counter: 0 }).animate({
